@@ -1,0 +1,165 @@
+﻿@* model binding: binding properties of Tag to user form *@
+@model List<Bloggie.Web.Models.Domain.Tag>
+@{
+    // When user click on nxt page button , add 1 to current page number
+    int nextPage = Convert.ToInt32(ViewBag.PageNumber) + 1;
+
+    // When user click on previous page button , minus 1 from current page number
+    int prevPage = Convert.ToInt32(ViewBag.PageNumber) - 1;
+}
+
+<div class="bg-secondary bg-opacity-10 py-2">
+    <div class="container">
+        <h1>Show All Tags - Admin Functionality</h1>
+    </div>
+</div>
+
+@* Filtering *@
+<form method="get"
+      asp-controller="AdminTags"
+      asp-action="List">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col col-md-3 d-flex">
+                <input type="text" class="form-control" name="searchQuery" value="@ViewBag.SearchQuery" /> @* name attribute will be used to filter    and value attribute is used to keep whatever value as it is we are searching in textbox*@
+                <button type="submit" class="btn btn-warning ms-3">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="container mt-3">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>
+                        Name
+                        @* Sorting *@
+                        <span>
+                            <span>
+                                @* sortBy and sortDirection should passed as a parameters to controller method *@
+                                <a class="btn btn-light"
+                                   asp-controller="AdminTags"
+                                   asp-action="List"
+                                   asp-route-sortBy="Name"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-up"></i>
+                                </a>
+                            </span>
+                            <span>
+                                @* sortBy and sortDirection should passed as a parameters to controller method *@
+                                <a class="btn btn-light"
+                                   asp-controller="AdminTags"
+                                   asp-action="List"
+                                   asp-route-sortBy="Name"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-down"></i>
+                                </a>
+                            </span>
+                        </span>
+                    </th>
+                    <th>
+                        Display Name
+                        @* Sorting *@
+                        <span>
+                            <span>
+                                @* sortBy and sortDirection should passed as a parameters to controller method *@
+                                <a class="btn btn-light"
+                                   asp-controller="AdminTags"
+                                   asp-action="List"
+                                   asp-route-sortBy="DisplayName"
+                                   asp-route-sortDirection="Asc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-up"></i>
+                                </a>
+                            </span>
+                            <span>
+                                @* sortBy and sortDirection should passed as a parameters to controller method *@
+                                <a class="btn btn-light"
+                                   asp-controller="AdminTags"
+                                   asp-action="List"
+                                   asp-route-sortBy="DisplayName"
+                                   asp-route-sortDirection="Desc"
+                                   asp-route-searchQuery="@ViewBag.SearchQuery">
+                                    <i class="bi bi-arrow-down"></i>
+                                </a>
+                            </span>
+                        </span>
+                    </th>
+                    <th> </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tag in Model)
+                {
+                    <tr>
+                        <td>@tag.Id</td>
+                        <td>@tag.Name</td>
+                        <td>@tag.DisplayName</td>
+                        <td><a asp-area="" asp-controller="AdminTags" asp-action="Edit" asp-route-id="@tag.Id">Edit</a></td>
+                    </tr>
+
+                }
+            </tbody>
+        </table>
+
+
+        @* Pagination *@
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                @* Previous page *@
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-controller="AdminTags"
+                       asp-action="List"
+                       asp-route-pageNumber="@prevPage"
+                       asp-route-pageSize="@ViewBag.PageSize"
+                       asp-route-sortBy="@ViewBag.SortBy"
+                       asp-route-sortDirection="@ViewBag.SortDirection">
+                        Previous
+                    </a>
+                </li>
+
+                @* to get page numbers *@
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-controller="AdminTags"
+                           asp-action="List"
+                           asp-route-pageNumber="@i"
+                           asp-route-pageSize="@ViewBag.PageSize"
+                           asp-route-sortBy="@ViewBag.SortBy"
+                           asp-route-sortDirection="@ViewBag.SortDirection">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                @* next page *@
+                <li class="page-item">
+                    <a class="page-link"
+                       asp-controller="AdminTags"
+                       asp-action="List"
+                       asp-route-pageNumber="@nextPage"
+                       asp-route-pageSize="@ViewBag.PageSize"
+                       asp-route-sortBy="@ViewBag.SortBy"
+                       asp-route-sortDirection="@ViewBag.SortDirection"
+                    >
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <p>No tags Found!</p>
+    }
+</div>
